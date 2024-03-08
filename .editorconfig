@@ -15,6 +15,10 @@ insert_final_newline = false
 indent_style = space
 indent_size = 3
 
-[{Makefile,Dockerfile,*.yml,*.yaml}]
+[{Dockerfile,*.yml,*.yaml}]
 indent_style = space
 indent_size = 3
+
+[{Makefile}]
+indent_style = tab
+indent_size = 1
