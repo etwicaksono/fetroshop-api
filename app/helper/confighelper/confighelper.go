@@ -15,7 +15,7 @@ func GetConfig() *viper.Viper {
 	// set up default value
 	config.SetDefault("environment", "development")
 	config.SetDefault("fiber.prefork", false)
-	config.SetDefault("database.logLevel", "halo")
+	config.SetDefault("database.logLevel", "trace")
 
 	err := config.ReadInConfig()
 	if err != nil {

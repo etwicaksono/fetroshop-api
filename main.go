@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/BuildWithYou/fetroshop-api/app/helper/confighelper"
 	"github.com/BuildWithYou/fetroshop-api/app/helper/logger"
@@ -28,6 +29,30 @@ func main() {
 			cmsLogger.Fatal(err)
 		}
 		cmsLogger.Info("Bucket created successfully")
+
+		// Set public access policy for the bucket
+		policy := `
+      {
+         "Version":"2012-10-17",
+         "Statement":[
+               {
+                  "Effect":"Allow",
+                  "Principal":{"AWS":["*"]},
+                  "Action":["s3:GetObject"],
+                  "Resource":
+                     [
+                        "arn:aws:s3:::` + myMinio.BucketName + `/public/*",
+                        "arn:aws:s3:::` + myMinio.BucketName + `/testing-images/*"
+                     ]
+               }
+            ]
+      }`
+		err = myMinio.Client.SetBucketPolicy(context.Background(), myMinio.BucketName, policy)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		fmt.Printf("Bucket %s created with public access.\n", myMinio.BucketName)
 	}
 
 	// Run cms server

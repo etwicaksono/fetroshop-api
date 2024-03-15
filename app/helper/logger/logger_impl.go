@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+/* Reset output file path */
 func (lg *Logger) WebLoggerResetOutput() {
 	today := time.Now().Format("2006-01-02")
 	pathFile := fmt.Sprintf("%s-%s.log", webBasePath, today)
@@ -15,6 +16,7 @@ func (lg *Logger) WebLoggerResetOutput() {
 	lg.LogFile.SetOutput(file)
 }
 
+/* Reset output file path */
 func (lg *Logger) CmsLoggerResetOutput() {
 	today := time.Now().Format("2006-01-02")
 	pathFile := fmt.Sprintf("%s-%s.log", cmsBasePath, today)
