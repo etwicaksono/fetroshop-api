@@ -24,8 +24,8 @@ func (svc *productService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 
 	// TODO: validate image url
 	fmt.Println("len(payload.ImageUrl) : ", len(payload.ImageUrl))
-	fmt.Println("len(payload.ImageUrl) : ", len(payload.ImageUrl))
 	if len(payload.ImageUrl) > 0 {
+		fmt.Println("payload.ImageUrl : ", payload.ImageUrl)
 		fmt.Println("payload.ImageUrl : ", payload.ImageUrl)
 		fmt.Println("len(payload.ImageUrl) : ", len(payload.ImageUrl))
 		for idx, url := range payload.ImageUrl {
