@@ -13,7 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (model.Response, error) {
 	var (
 		subdistrictSlice          []subdistricts.Subdistrict
 		selected, filtered, total int64
@@ -23,7 +23,7 @@ func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (*model.Response, e
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -33,7 +33,7 @@ func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (*model.Response, e
 	result := svc.DistrictRepo.Find(district, fiber.Map{"id": payload.DistrictID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"districtId": "District not found"}), nil
@@ -49,7 +49,7 @@ func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (*model.Response, e
 	result = svc.SubdistrictRepo.List(&subdistrictSlice, condition, int(payload.Limit), int(payload.Offset), orderBy)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	selected = result.RowsAffected
 
@@ -66,14 +66,14 @@ func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (*model.Response, e
 	result = svc.SubdistrictRepo.Count(&filtered, condition)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	// count total
 	result = svc.SubdistrictRepo.Count(&total, fiber.Map{})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	return responsehelper.Response200(

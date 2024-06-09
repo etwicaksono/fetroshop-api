@@ -10,12 +10,12 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *categoryService) Find(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *categoryService) Find(ctx *fiber.Ctx) (model.Response, error) {
 	payload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -25,7 +25,7 @@ func (svc *categoryService) Find(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.CategoryRepo.Find(category, map[string]any{"code": payload.Code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Invalid category code"}), nil // #marked: message

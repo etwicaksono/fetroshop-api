@@ -17,7 +17,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *authService) CmsLogin(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *authService) CmsLogin(ctx *fiber.Ctx) (model.Response, error) {
 	var user users.User
 
 	payload := new(model.LoginRequest)
@@ -27,7 +27,7 @@ func (svc *authService) CmsLogin(ctx *fiber.Ctx) (*model.Response, error) {
 	errValidation, errParsing := validatorhelper.ValidateBodyPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -37,7 +37,7 @@ func (svc *authService) CmsLogin(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.UserRepo.Find(&user, fiber.Map{"username": payload.Username})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	invalidEmailPasswordMsg := fiber.Map{
 		"username": "Invalid username or password",
@@ -78,11 +78,11 @@ func (svc *authService) CmsLogin(ctx *fiber.Ctx) (*model.Response, error) {
 	)
 	if result.Error != nil && !gormhelper.HasAffectedRows(result) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		svc.Logger.Error("Failed to record user access")
-		return nil, errorhelper.Error500("Failed to record user access") // #marked: message
+		return model.Response{}, errorhelper.Error500("Failed to record user access") // #marked: message
 	}
 
 	generatedJwt := jwt.Generate(&jwt.TokenPayload{

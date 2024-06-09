@@ -32,7 +32,7 @@ func CmsControllerProvider(
 	}
 }
 
-func execute(ctx *fiber.Ctx, handler func(ctx *fiber.Ctx) (*model.Response, error)) (err error) {
+func execute(ctx *fiber.Ctx, handler func(ctx *fiber.Ctx) (model.Response, error)) (err error) {
 	response, err := handler(ctx)
 	if err != nil {
 		return err

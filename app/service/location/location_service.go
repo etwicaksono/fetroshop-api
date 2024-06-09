@@ -15,10 +15,10 @@ import (
 )
 
 type LocationService interface {
-	ListProvinces(ctx *fiber.Ctx) (*model.Response, error)
-	ListCities(ctx *fiber.Ctx) (*model.Response, error)
-	ListDistricts(ctx *fiber.Ctx) (*model.Response, error)
-	ListSubdistricts(ctx *fiber.Ctx) (*model.Response, error)
+	ListProvinces(ctx *fiber.Ctx) (model.Response, error)
+	ListCities(ctx *fiber.Ctx) (model.Response, error)
+	ListDistricts(ctx *fiber.Ctx) (model.Response, error)
+	ListSubdistricts(ctx *fiber.Ctx) (model.Response, error)
 }
 
 type locationService struct {

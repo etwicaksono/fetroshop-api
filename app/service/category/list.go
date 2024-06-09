@@ -12,7 +12,7 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *categoryService) List(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *categoryService) List(ctx *fiber.Ctx) (model.Response, error) {
 	var (
 		categorySlice []categories.Category
 		parentID      null.Int
@@ -21,7 +21,7 @@ func (svc *categoryService) List(ctx *fiber.Ctx) (*model.Response, error) {
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -36,7 +36,7 @@ func (svc *categoryService) List(ctx *fiber.Ctx) (*model.Response, error) {
 		})
 		if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 			svc.Logger.UseError(result.Error)
-			return nil, result.Error
+			return model.Response{}, result.Error
 		}
 		if gormhelper.IsErrRecordNotFound(result.Error) {
 			return responsehelper.ResponseErrorValidation(fiber.Map{"parentCode": "Invalid parent category code"}), nil // #marked: message
@@ -50,7 +50,7 @@ func (svc *categoryService) List(ctx *fiber.Ctx) (*model.Response, error) {
 	}, int(payload.Limit), int(payload.Offset), orderBy)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	var list []*model.CategoryResponse

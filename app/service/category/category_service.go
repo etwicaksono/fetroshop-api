@@ -12,11 +12,11 @@ import (
 )
 
 type CategoryService interface {
-	Create(ctx *fiber.Ctx) (*model.Response, error)
-	Update(ctx *fiber.Ctx) (*model.Response, error)
-	Delete(ctx *fiber.Ctx) (*model.Response, error)
-	List(ctx *fiber.Ctx) (*model.Response, error)
-	Find(ctx *fiber.Ctx) (*model.Response, error)
+	Create(ctx *fiber.Ctx) (model.Response, error)
+	Update(ctx *fiber.Ctx) (model.Response, error)
+	Delete(ctx *fiber.Ctx) (model.Response, error)
+	List(ctx *fiber.Ctx) (model.Response, error)
+	Find(ctx *fiber.Ctx) (model.Response, error)
 }
 
 type categoryService struct {

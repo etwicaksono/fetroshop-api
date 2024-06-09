@@ -11,13 +11,13 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *categoryService) Update(ctx *fiber.Ctx) (model.Response, error) {
 	// parse param
 	pathPayload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, pathPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -28,7 +28,7 @@ func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	errValidation, errParsing = validatorhelper.ValidateBodyPayload(ctx, svc.Validate, bodyPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -55,7 +55,7 @@ func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.CategoryRepo.Find(category, fiber.Map{"code": pathPayload.Code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Category not found"}), nil // #marked: message
@@ -67,7 +67,7 @@ func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 		result := svc.CategoryRepo.Find(parentCategory, map[string]any{"code": bodyPayload.ParentCode})
 		if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 			svc.Logger.UseError(result.Error)
-			return nil, result.Error
+			return model.Response{}, result.Error
 		}
 		if gormhelper.IsErrRecordNotFound(result.Error) {
 			return responsehelper.ResponseErrorValidation(fiber.Map{"parentCode": "Invalid parent category code"}), nil // #marked: message
@@ -84,7 +84,7 @@ func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"displayOrder": "Display order has been taken"}), nil // #marked: message
@@ -97,7 +97,7 @@ func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Category code already used"}), nil // #marked: message
@@ -114,7 +114,7 @@ func (svc *categoryService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 		fiber.Map{"id": category.ID},
 	)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		return responsehelper.Response500("Failed to update category", nil), nil // #marked: message

@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *authService) CmsLogout(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *authService) CmsLogout(ctx *fiber.Ctx) (model.Response, error) {
 	userID := jwt.GetUserID(ctx)
 	identifier := jwt.GetAccessIdentifier(ctx)
 	result := svc.UserAccessRepo.Delete(&user_accesses.UserAccess{
@@ -17,7 +17,7 @@ func (svc *authService) CmsLogout(ctx *fiber.Ctx) (*model.Response, error) {
 		UserID: userID})
 	if result.Error != nil {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		return responsehelper.Response500("Failed to logout", nil), nil // #marked: message

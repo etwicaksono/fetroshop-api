@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *storeService) List(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *storeService) List(ctx *fiber.Ctx) (model.Response, error) {
 	var (
 		storeSlice                []stores.Store
 		selected, filtered, total int64
@@ -20,7 +20,7 @@ func (svc *storeService) List(ctx *fiber.Ctx) (*model.Response, error) {
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -30,7 +30,7 @@ func (svc *storeService) List(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.StoreRepo.List(&storeSlice, payload.Search, int(payload.Limit), int(payload.Offset), orderBy)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	// retrieve data
@@ -58,14 +58,14 @@ func (svc *storeService) List(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.StoreRepo.Count(&filtered, payload.Search)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	// count total
 	result = svc.StoreRepo.Count(&total, "")
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	return responsehelper.Response200(

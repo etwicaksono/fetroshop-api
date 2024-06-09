@@ -12,13 +12,13 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *brandService) ListByPrefix(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *brandService) ListByPrefix(ctx *fiber.Ctx) (model.Response, error) {
 	var brandSlice []brands.Brand
 	payload := new(model.ListBrandsByPrefixRequest)
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -34,7 +34,7 @@ func (svc *brandService) ListByPrefix(ctx *fiber.Ctx) (*model.Response, error) {
 	)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	var list []*model.BrandResponse

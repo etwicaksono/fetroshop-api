@@ -11,13 +11,13 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *categoryService) Create(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *categoryService) Create(ctx *fiber.Ctx) (model.Response, error) {
 	// parse body
 	payload := new(model.UpsertCategoryRequest)
 	errValidation, errParsing := validatorhelper.ValidateBodyPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -45,7 +45,7 @@ func (svc *categoryService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 		result := svc.CategoryRepo.Find(parentCategory, map[string]any{"code": payload.ParentCode})
 		if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 			svc.Logger.UseError(result.Error)
-			return nil, result.Error
+			return model.Response{}, result.Error
 		}
 		if gormhelper.IsErrRecordNotFound(result.Error) {
 			return responsehelper.ResponseErrorValidation(fiber.Map{"parentCode": "Invalid parent category code"}), nil // #marked: message
@@ -59,7 +59,7 @@ func (svc *categoryService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.CategoryRepo.Find(categoryByDisplayOrder, map[string]any{"display_order": displayOrder})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"displayOrder": "Display order has been taken"}), nil // #marked: message
@@ -70,7 +70,7 @@ func (svc *categoryService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.CategoryRepo.Find(categoryByCode, map[string]any{"code": code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Category code has been taken"}), nil // #marked: message
@@ -88,7 +88,7 @@ func (svc *categoryService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.CategoryRepo.Create(newCategory)
 	if result.Error != nil && !gormhelper.IsErrDuplicatedKey(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrDuplicatedKey(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Category code has been taken"}), nil // #marked: message

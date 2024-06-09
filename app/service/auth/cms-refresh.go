@@ -15,7 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *authService) CmsRefresh(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *authService) CmsRefresh(ctx *fiber.Ctx) (model.Response, error) {
 	userID := jwt.GetUserID(ctx)
 	identifier := jwt.GetAccessIdentifier(ctx)
 	jwtTokenKey := svc.Config.GetString("security.jwt.tokenKey")
@@ -54,11 +54,11 @@ func (svc *authService) CmsRefresh(ctx *fiber.Ctx) (*model.Response, error) {
 	)
 	if result.Error != nil {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		svc.Logger.Error("Failed to refresh token")
-		return nil, errorhelper.Error500("Failed to refresh token") // #marked: message
+		return model.Response{}, errorhelper.Error500("Failed to refresh token") // #marked: message
 	}
 
 	return responsehelper.Response200(

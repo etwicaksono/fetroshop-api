@@ -21,13 +21,13 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *storeService) Create(ctx *fiber.Ctx) (model.Response, error) {
 	// parse body
 	payload := new(model.UpsertStoreRequest)
 	errValidation, errParsing := validatorhelper.ValidateBodyPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -67,7 +67,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.StoreRepo.Find(existingStore, fiber.Map{"user_id": userID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "User already has store"}), nil
@@ -78,7 +78,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.StoreRepo.Find(storeByCode, fiber.Map{"code": code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Store code has been taken"}), nil // #marked: message
@@ -89,7 +89,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.ProvinceRepo.Find(province, fiber.Map{"id": provinceID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"provinceId": "provinceId is invalid"}), nil // #marked: message
@@ -100,7 +100,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.CityRepo.Find(city, fiber.Map{"province_id": provinceID, "id": cityID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"cityId": "cityId is invalid or not match with provinceId"}), nil // #marked: message
@@ -111,7 +111,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.DistrictRepo.Find(district, fiber.Map{"city_id": cityID, "id": districtID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"districtId": "districtId is invalid or not match with cityId"}), nil // #marked: message
@@ -122,7 +122,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.SubdistrictRepo.Find(subdistrict, fiber.Map{"district_id": districtID, "id": subdistrictID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"subdistrictId": "subdistrictId is invalid or not match with districtId"}), nil // #marked: message
@@ -161,7 +161,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.StoreRepo.Create(newStore)
 	if result.Error != nil && !gormhelper.IsErrDuplicatedKey(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrDuplicatedKey(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Store code has been taken"}), nil // #marked: message

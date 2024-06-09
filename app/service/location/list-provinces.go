@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *locationService) ListProvinces(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *locationService) ListProvinces(ctx *fiber.Ctx) (model.Response, error) {
 	var (
 		provinceSlice             []provinces.Province
 		selected, filtered, total int64
@@ -22,7 +22,7 @@ func (svc *locationService) ListProvinces(ctx *fiber.Ctx) (*model.Response, erro
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -37,7 +37,7 @@ func (svc *locationService) ListProvinces(ctx *fiber.Ctx) (*model.Response, erro
 	result := svc.ProvinceRepo.List(&provinceSlice, condition, int(payload.Limit), int(payload.Offset), orderBy)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	selected = result.RowsAffected
 
@@ -54,14 +54,14 @@ func (svc *locationService) ListProvinces(ctx *fiber.Ctx) (*model.Response, erro
 	result = svc.ProvinceRepo.Count(&filtered, condition)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	// count total
 	result = svc.ProvinceRepo.Count(&total, fiber.Map{})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 
 	return responsehelper.Response200(

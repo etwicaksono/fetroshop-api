@@ -10,12 +10,12 @@ import (
 	"github.com/gofiber/utils"
 )
 
-func (svc *brandService) Find(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *brandService) Find(ctx *fiber.Ctx) (model.Response, error) {
 	payload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -25,13 +25,13 @@ func (svc *brandService) Find(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.BrandRepo.Find(brand, map[string]any{"code": payload.Code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Invalid brand code"}), nil // #marked: message
 	}
 
-	return &model.Response{
+	return model.Response{
 		Code:    fiber.StatusOK,
 		Status:  utils.StatusMessage(fiber.StatusOK),
 		Message: "Successfuly got brand", // #marked: message

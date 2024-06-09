@@ -19,16 +19,16 @@ const CUSTOMER_TYPE = "customer"
 
 type AuthService interface {
 	// Cms Modules
-	CmsRegister(ctx *fiber.Ctx) (*model.Response, error)
-	CmsLogin(ctx *fiber.Ctx) (*model.Response, error)
-	CmsLogout(ctx *fiber.Ctx) (*model.Response, error)
-	CmsRefresh(ctx *fiber.Ctx) (*model.Response, error)
+	CmsRegister(ctx *fiber.Ctx) (model.Response, error)
+	CmsLogin(ctx *fiber.Ctx) (model.Response, error)
+	CmsLogout(ctx *fiber.Ctx) (model.Response, error)
+	CmsRefresh(ctx *fiber.Ctx) (model.Response, error)
 
 	// Web Modules
-	WebRegister(ctx *fiber.Ctx) (*model.Response, error)
-	WebLogin(ctx *fiber.Ctx) (*model.Response, error)
-	WebLogout(ctx *fiber.Ctx) (*model.Response, error)
-	WebRefresh(ctx *fiber.Ctx) (*model.Response, error)
+	WebRegister(ctx *fiber.Ctx) (model.Response, error)
+	WebLogin(ctx *fiber.Ctx) (model.Response, error)
+	WebLogout(ctx *fiber.Ctx) (model.Response, error)
+	WebRefresh(ctx *fiber.Ctx) (model.Response, error)
 }
 
 type authService struct {

@@ -10,13 +10,13 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *brandService) Update(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *brandService) Update(ctx *fiber.Ctx) (model.Response, error) {
 	// parse param
 	pathPayload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, pathPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -27,7 +27,7 @@ func (svc *brandService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	errValidation, errParsing = validatorhelper.ValidateBodyPayload(ctx, svc.Validate, bodyPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -38,7 +38,7 @@ func (svc *brandService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.BrandRepo.Find(brand, fiber.Map{"code": pathPayload.Code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Brand not found"}), nil // #marked: message
@@ -51,7 +51,7 @@ func (svc *brandService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Brand code already used"}), nil // #marked: message
@@ -67,7 +67,7 @@ func (svc *brandService) Update(ctx *fiber.Ctx) (*model.Response, error) {
 	)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		svc.Logger.Error("Failed to update brand")

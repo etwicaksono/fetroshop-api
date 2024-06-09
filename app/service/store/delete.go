@@ -9,12 +9,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *storeService) Delete(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *storeService) Delete(ctx *fiber.Ctx) (model.Response, error) {
 	pathPayload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, pathPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -24,7 +24,7 @@ func (svc *storeService) Delete(ctx *fiber.Ctx) (*model.Response, error) {
 	errValidation, errParsing = validatorhelper.ValidateQueryPayload(ctx, svc.Validate, queryPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -36,7 +36,7 @@ func (svc *storeService) Delete(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.StoreRepo.Find(store, fiber.Map{"code": pathPayload.Code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Store not found"}), nil // #marked: message
@@ -47,7 +47,7 @@ func (svc *storeService) Delete(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.StoreRepo.Delete(map[string]any{"id": store.ID})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		return responsehelper.Response500("Failed to delete store", nil), nil // #marked: message

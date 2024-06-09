@@ -6,7 +6,7 @@ import (
 )
 
 type AuthController interface {
-	// execute(ctx *fiber.Ctx, handler func(ctx *fiber.Ctx) (*model.Response, error)) (err error)
+	// execute(ctx *fiber.Ctx, handler func(ctx *fiber.Ctx) (model.Response, error)) (err error)
 	Register(ctx *fiber.Ctx) (err error)
 	Login(ctx *fiber.Ctx) (err error)
 	Logout(ctx *fiber.Ctx) (err error)

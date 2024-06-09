@@ -35,7 +35,7 @@ type TokenReversed struct {
 }
 
 // Generate generates the jwt token based on payload
-func Generate(payload *TokenPayload) *TokenGenerated {
+func Generate(payload *TokenPayload) TokenGenerated {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"exp":       payload.Expiration.Unix(),
 		"accessKey": payload.AccessKey,
@@ -48,7 +48,7 @@ func Generate(payload *TokenPayload) *TokenGenerated {
 		panic(err)
 	}
 
-	return &TokenGenerated{
+	return TokenGenerated{
 		Token:     token,
 		ExpiredAt: payload.Expiration,
 	}

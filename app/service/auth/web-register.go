@@ -11,14 +11,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *authService) WebRegister(ctx *fiber.Ctx) (*model.Response, error) {
+func (svc *authService) WebRegister(ctx *fiber.Ctx) (model.Response, error) {
 	var existingUsername, existingPhone, existingEmail customers.Customer
 
 	payload := new(model.RegistrationRequest)
 	errValidation, errParsing := validatorhelper.ValidateBodyPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
-		return nil, errParsing
+		return model.Response{}, errParsing
 	}
 	if errValidation != nil {
 		return responsehelper.ResponseErrorValidation(errValidation), nil
@@ -27,7 +27,7 @@ func (svc *authService) WebRegister(ctx *fiber.Ctx) (*model.Response, error) {
 	result := svc.CustomerRepo.Find(&existingUsername, fiber.Map{"username": payload.Username})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"username": "Username already used"}), nil // #marked: message
@@ -36,7 +36,7 @@ func (svc *authService) WebRegister(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.CustomerRepo.Find(&existingPhone, fiber.Map{"phone": payload.Phone})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"phone": "Phone already used"}), nil // #marked: message
@@ -45,7 +45,7 @@ func (svc *authService) WebRegister(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.CustomerRepo.Find(&existingEmail, fiber.Map{"email": payload.Email})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.IsErrRecordNotFound(result.Error) {
 		return responsehelper.ResponseErrorValidation(fiber.Map{"email": "Email already used"}), nil // #marked: message
@@ -63,11 +63,11 @@ func (svc *authService) WebRegister(ctx *fiber.Ctx) (*model.Response, error) {
 	result = svc.CustomerRepo.Create(newCustomer)
 	if result.Error != nil {
 		svc.Logger.UseError(result.Error)
-		return nil, result.Error
+		return model.Response{}, result.Error
 	}
 	if !gormhelper.HasAffectedRows(result) {
 		svc.Logger.Error("Failed to create user")
-		return nil, errorhelper.Error500("Failed to create user") // #marked: message
+		return model.Response{}, errorhelper.Error500("Failed to create user") // #marked: message
 	}
 
 	return responsehelper.Response201(
