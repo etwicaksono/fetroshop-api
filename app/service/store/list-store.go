@@ -11,7 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *storeService) List(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *storeService) ListStore(ctx *fiber.Ctx) (model.Response, error) {
 	var (
 		storeSlice                []stores.Store
 		selected, filtered, total int64

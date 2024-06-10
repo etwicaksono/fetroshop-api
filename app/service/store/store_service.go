@@ -17,11 +17,11 @@ import (
 )
 
 type StoreService interface {
-	Create(ctx *fiber.Ctx) (model.Response, error)
-	Update(ctx *fiber.Ctx) (model.Response, error)
-	Delete(ctx *fiber.Ctx) (model.Response, error)
-	List(ctx *fiber.Ctx) (model.Response, error)
-	Find(ctx *fiber.Ctx) (model.Response, error)
+	CreateStore(ctx *fiber.Ctx) (model.Response, error)
+	UpdateStore(ctx *fiber.Ctx) (model.Response, error)
+	DeleteStore(ctx *fiber.Ctx) (model.Response, error)
+	ListStore(ctx *fiber.Ctx) (model.Response, error)
+	FindStore(ctx *fiber.Ctx) (model.Response, error)
 }
 
 type storeService struct {

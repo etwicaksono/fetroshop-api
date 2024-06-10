@@ -10,7 +10,7 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *brandService) Update(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *brandService) UpdateBrand(ctx *fiber.Ctx) (model.Response, error) {
 	// parse param
 	pathPayload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, pathPayload)

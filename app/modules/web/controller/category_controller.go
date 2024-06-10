@@ -35,7 +35,7 @@ func CategoryControllerProvider(vld *validator.Validate, catSvc category.Categor
 // @Failure      500  {object}  model.Response
 // @Router       /api/category/list [get]
 func (ctr *categoryController) List(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.List)
+	return execute(ctx, ctr.CategoryService.ListCategory)
 }
 
 // @Summary      Get detail category
@@ -50,5 +50,5 @@ func (ctr *categoryController) List(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/category/detail [get]
 func (ctr *categoryController) Find(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.Find)
+	return execute(ctx, ctr.CategoryService.FindCategory)
 }

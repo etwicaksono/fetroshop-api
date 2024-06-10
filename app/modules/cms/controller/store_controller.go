@@ -40,7 +40,7 @@ func StoreControllerProvider(vld *validator.Validate, svc store.StoreService) St
 // @Router       /api/store/create  [post]
 // @Security Bearer
 func (ctr *storeController) Create(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.Create)
+	return execute(ctx, ctr.StoreService.CreateStore)
 }
 
 // @Summary      Update store
@@ -58,7 +58,7 @@ func (ctr *storeController) Create(ctx *fiber.Ctx) (err error) {
 // @Router       /api/store/{code} [put]
 // @Security Bearer
 func (ctr *storeController) Update(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.Update)
+	return execute(ctx, ctr.StoreService.UpdateStore)
 }
 
 // @Summary      Delete store
@@ -75,7 +75,7 @@ func (ctr *storeController) Update(ctx *fiber.Ctx) (err error) {
 // @Router       /api/store/{code} [delete]
 // @Security Bearer
 func (ctr *storeController) Delete(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.Delete)
+	return execute(ctx, ctr.StoreService.DeleteStore)
 }
 
 // @Summary      List stores
@@ -90,7 +90,7 @@ func (ctr *storeController) Delete(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/store/list [get]
 func (ctr *storeController) List(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.List)
+	return execute(ctx, ctr.StoreService.ListStore)
 }
 
 // @Summary      Get detail store
@@ -105,5 +105,5 @@ func (ctr *storeController) List(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/store/{code} [get]
 func (ctr *storeController) Find(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.Find)
+	return execute(ctx, ctr.StoreService.FindStore)
 }

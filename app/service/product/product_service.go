@@ -12,11 +12,11 @@ import (
 )
 
 type ProductService interface {
-	Create(ctx *fiber.Ctx) (model.Response, error)
-	Update(ctx *fiber.Ctx) (model.Response, error)
-	Delete(ctx *fiber.Ctx) (model.Response, error)
-	List(ctx *fiber.Ctx) (model.Response, error)
-	Find(ctx *fiber.Ctx) (model.Response, error)
+	CreateProduct(ctx *fiber.Ctx) (model.Response, error)
+	UpdateProduct(ctx *fiber.Ctx) (model.Response, error)
+	DeleteProduct(ctx *fiber.Ctx) (model.Response, error)
+	ListProduct(ctx *fiber.Ctx) (model.Response, error)
+	FindProduct(ctx *fiber.Ctx) (model.Response, error)
 }
 
 type productService struct {

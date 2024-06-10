@@ -10,7 +10,7 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *categoryService) Find(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *categoryService) FindCategory(ctx *fiber.Ctx) (model.Response, error) {
 	payload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {

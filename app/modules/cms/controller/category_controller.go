@@ -39,7 +39,7 @@ func CategoryControllerProvider(vld *validator.Validate, catSvc category.Categor
 // @Router       /api/category/create  [post]
 // @Security Bearer
 func (ctr *categoryController) Create(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.Create)
+	return execute(ctx, ctr.CategoryService.CreateCategory)
 }
 
 // @Summary      Update category
@@ -56,7 +56,7 @@ func (ctr *categoryController) Create(ctx *fiber.Ctx) (err error) {
 // @Router       /api/category/{code} [put]
 // @Security Bearer
 func (ctr *categoryController) Update(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.Update)
+	return execute(ctx, ctr.CategoryService.UpdateCategory)
 }
 
 // @Summary      Delete category
@@ -73,7 +73,7 @@ func (ctr *categoryController) Update(ctx *fiber.Ctx) (err error) {
 // @Router       /api/category/{code} [delete]
 // @Security Bearer
 func (ctr *categoryController) Delete(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.Delete)
+	return execute(ctx, ctr.CategoryService.DeleteCategory)
 }
 
 // @Summary      List categories
@@ -88,7 +88,7 @@ func (ctr *categoryController) Delete(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/category/list [get]
 func (ctr *categoryController) List(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.List)
+	return execute(ctx, ctr.CategoryService.ListCategory)
 }
 
 // @Summary      Get detail category
@@ -103,5 +103,5 @@ func (ctr *categoryController) List(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/category/detail [get]
 func (ctr *categoryController) Find(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.CategoryService.Find)
+	return execute(ctx, ctr.CategoryService.FindCategory)
 }

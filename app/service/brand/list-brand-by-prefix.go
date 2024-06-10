@@ -2,6 +2,7 @@ package brand
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/BuildWithYou/fetroshop-api/app/domain/brands"
 	"github.com/BuildWithYou/fetroshop-api/app/helper/gormhelper"
@@ -11,9 +12,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *brandService) List(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *brandService) ListBrandByPrefix(ctx *fiber.Ctx) (model.Response, error) {
 	var brandSlice []brands.Brand
-	payload := new(model.ListBrandsRequest)
+	payload := new(model.ListBrandsByPrefixRequest)
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
@@ -24,7 +25,13 @@ func (svc *brandService) List(ctx *fiber.Ctx) (model.Response, error) {
 	}
 
 	orderBy := fmt.Sprintf("%s %s", payload.OrderBy, payload.OrderDirection)
-	result := svc.BrandRepo.List(&brandSlice, fiber.Map{}, int(payload.Limit), int(payload.Offset), orderBy)
+	result := svc.BrandRepo.List(
+		&brandSlice,
+		map[string]any{fmt.Sprintf("LOWER(SUBSTR(name, 1, %d))", len(payload.Prefix)): []any{"=", strings.ToLower(payload.Prefix)}},
+		int(payload.Limit),
+		int(payload.Offset),
+		orderBy,
+	)
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
 		return model.Response{}, result.Error

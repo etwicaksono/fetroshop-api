@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *productService) Create(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *productService) CreateProduct(ctx *fiber.Ctx) (model.Response, error) {
 	// parse body
 	payload := new(model.UpsertProductRequest)
 	errValidation, errParsing := validatorhelper.ValidateBodyPayload(ctx, svc.Validate, payload)

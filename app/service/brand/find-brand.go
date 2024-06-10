@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/utils"
 )
 
-func (svc *brandService) Find(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *brandService) FindBrand(ctx *fiber.Ctx) (model.Response, error) {
 	payload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateQueryPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {

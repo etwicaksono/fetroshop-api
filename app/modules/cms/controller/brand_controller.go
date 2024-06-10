@@ -40,7 +40,7 @@ func BrandControllerProvider(vld *validator.Validate, brSvc brand.BrandService) 
 // @Router       /api/brand/create  [post]
 // @Security Bearer
 func (ctr *brandController) Create(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.BrandService.Create)
+	return execute(ctx, ctr.BrandService.CreateBrand)
 }
 
 // @Summary      Update brand
@@ -57,7 +57,7 @@ func (ctr *brandController) Create(ctx *fiber.Ctx) (err error) {
 // @Router       /api/brand/{code} [put]
 // @Security Bearer
 func (ctr *brandController) Update(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.BrandService.Update)
+	return execute(ctx, ctr.BrandService.UpdateBrand)
 }
 
 // @Summary      Delete brand
@@ -74,7 +74,7 @@ func (ctr *brandController) Update(ctx *fiber.Ctx) (err error) {
 // @Router       /api/brand/{code} [delete]
 // @Security Bearer
 func (ctr *brandController) Delete(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.BrandService.Delete)
+	return execute(ctx, ctr.BrandService.DeleteBrand)
 }
 
 // @Summary      List brands
@@ -89,7 +89,7 @@ func (ctr *brandController) Delete(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/brand/list [get]
 func (ctr *brandController) List(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.BrandService.List)
+	return execute(ctx, ctr.BrandService.ListBrand)
 }
 
 // @Summary      List brands by prefix
@@ -104,7 +104,7 @@ func (ctr *brandController) List(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/brand/list-by-prefix [get]
 func (ctr *brandController) ListByPrefix(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.BrandService.ListByPrefix)
+	return execute(ctx, ctr.BrandService.ListBrandByPrefix)
 }
 
 // @Summary      Get detail brand
@@ -119,5 +119,5 @@ func (ctr *brandController) ListByPrefix(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/brand/detail [get]
 func (ctr *brandController) Find(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.BrandService.Find)
+	return execute(ctx, ctr.BrandService.FindBrand)
 }

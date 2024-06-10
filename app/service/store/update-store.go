@@ -21,10 +21,21 @@ import (
 	"gopkg.in/guregu/null.v3"
 )
 
-func (svc *storeService) Create(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *storeService) UpdateStore(ctx *fiber.Ctx) (model.Response, error) {
+	// parse param
+	pathPayload := new(model.FindByCodeRequest)
+	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, pathPayload)
+	if errParsing != nil {
+		svc.Logger.UseError(errParsing)
+		return model.Response{}, errParsing
+	}
+	if errValidation != nil {
+		return responsehelper.ResponseErrorValidation(errValidation), nil
+	}
+
 	// parse body
-	payload := new(model.UpsertStoreRequest)
-	errValidation, errParsing := validatorhelper.ValidateBodyPayload(ctx, svc.Validate, payload)
+	bodyPayload := new(model.UpsertStoreRequest)
+	errValidation, errParsing = validatorhelper.ValidateBodyPayload(ctx, svc.Validate, bodyPayload)
 	if errParsing != nil {
 		svc.Logger.UseError(errParsing)
 		return model.Response{}, errParsing
@@ -50,32 +61,33 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (model.Response, error) {
 	)
 
 	userID = jwt.GetUserID(ctx)
-	code = slug.Make(payload.Code)
-	name = payload.Name
-	isActive = *payload.IsActive
-	latitude = null.NewString(payload.Latitude, payload.Latitude != "")
-	longitude = null.NewString(payload.Longitude, payload.Longitude != "")
-	address = payload.Address
-	provinceID = payload.ProvinceID
-	cityID = payload.CityID
-	districtID = payload.DistrictID
-	subdistrictID = payload.SubdistrictID
-	postalCode = payload.PostalCode
+	code = slug.Make(bodyPayload.Code)
+	name = bodyPayload.Name
+	isActive = *bodyPayload.IsActive
+	latitude = null.NewString(bodyPayload.Latitude, bodyPayload.Latitude != "")
+	longitude = null.NewString(bodyPayload.Longitude, bodyPayload.Longitude != "")
+	address = bodyPayload.Address
+	provinceID = bodyPayload.ProvinceID
+	cityID = bodyPayload.CityID
+	districtID = bodyPayload.DistrictID
+	subdistrictID = bodyPayload.SubdistrictID
+	postalCode = bodyPayload.PostalCode
 
-	// check user has store
+	// check store is exist
 	existingStore := new(stores.Store)
-	result := svc.StoreRepo.Find(existingStore, fiber.Map{"user_id": userID})
+	result := svc.StoreRepo.Find(existingStore, fiber.Map{"user_id": userID, "code": pathPayload.Code})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
 		return model.Response{}, result.Error
 	}
-	if !gormhelper.IsErrRecordNotFound(result.Error) {
-		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "User already has store"}), nil
+	if gormhelper.IsErrRecordNotFound(result.Error) {
+		return responsehelper.ResponseErrorValidation(fiber.Map{"code": "Store not found"}), nil
 	}
+	icon = existingStore.Icon
 
 	// check code is unique
-	storeByCode := new(stores.Store)
-	result = svc.StoreRepo.Find(storeByCode, fiber.Map{"code": code})
+	anotherStoreUsingSameCode := new(stores.Store)
+	result = svc.StoreRepo.Find(anotherStoreUsingSameCode, fiber.Map{"code": code, "user_id": []any{"!=", userID}})
 	if gormhelper.IsErrNotNilNotRecordNotFound(result.Error) {
 		svc.Logger.UseError(result.Error)
 		return model.Response{}, result.Error
@@ -139,11 +151,20 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (model.Response, error) {
 			svc.Logger.UseError(err)
 			return responsehelper.Response500("Error on upload icon", fiber.Map{"icon": err.Error()}), nil // #marked: generated message
 		}
+
+		if icon.Valid {
+			err = svc.Minio.Remove(ctx.Context(), icon.String)
+			if err != nil {
+				svc.Logger.UseError(err)
+				return responsehelper.Response500("Error on delete old icon", fiber.Map{"icon": err.Error()}), nil // #marked: generated message
+			}
+		}
+
 		icon = null.NewString(info.Key, true)
 	}
 
-	// create new store
-	newStore := &stores.Store{
+	// update store
+	updatedStore := &stores.Store{
 		UserID:        userID,
 		Code:          code,
 		Name:          name,
@@ -158,7 +179,7 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (model.Response, error) {
 		SubdistrictID: subdistrictID,
 		PostalCode:    postalCode,
 	}
-	result = svc.StoreRepo.Create(newStore)
+	result = svc.StoreRepo.Update(updatedStore, fiber.Map{"id": existingStore.ID})
 	if result.Error != nil && !gormhelper.IsErrDuplicatedKey(result.Error) {
 		svc.Logger.UseError(result.Error)
 		return model.Response{}, result.Error
@@ -170,33 +191,33 @@ func (svc *storeService) Create(ctx *fiber.Ctx) (model.Response, error) {
 		return responsehelper.Response500("Failed to create store", nil), nil // #marked: message
 	}
 
-	return responsehelper.Response201(
-		"Store created successfully", // #marked: message
+	return responsehelper.Response200(
+		"Store updated successfully", // #marked: message
 		model.StoreDetail{
-			Code:      newStore.Code,
-			Name:      newStore.Name,
-			IsActive:  newStore.IsActive,
-			Icon:      newStore.Icon.Ptr(),
-			Latitude:  newStore.Latitude.Ptr(),
-			Longitude: newStore.Longitude.Ptr(),
-			Address:   newStore.Address,
+			Code:      updatedStore.Code,
+			Name:      updatedStore.Name,
+			IsActive:  updatedStore.IsActive,
+			Icon:      updatedStore.Icon.Ptr(),
+			Latitude:  updatedStore.Latitude.Ptr(),
+			Longitude: updatedStore.Longitude.Ptr(),
+			Address:   updatedStore.Address,
 			Province: model.IDName{
-				ID:   newStore.ProvinceID,
+				ID:   updatedStore.ProvinceID,
 				Name: province.Name,
 			},
 			City: model.IDName{
-				ID:   newStore.CityID,
+				ID:   updatedStore.CityID,
 				Name: city.Name,
 			},
 			District: model.IDName{
-				ID:   newStore.DistrictID,
+				ID:   updatedStore.DistrictID,
 				Name: district.Name,
 			},
 			Subdistrict: model.IDName{
-				ID:   newStore.SubdistrictID,
+				ID:   updatedStore.SubdistrictID,
 				Name: subdistrict.Name,
 			},
-			PostalCode: newStore.PostalCode,
+			PostalCode: updatedStore.PostalCode,
 		},
 		nil), nil
 }

@@ -35,7 +35,7 @@ func StoreControllerProvider(vld *validator.Validate, svc store.StoreService) St
 // @Failure      500  {object}  model.Response
 // @Router       /api/store/list [get]
 func (ctr *storeController) List(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.List)
+	return execute(ctx, ctr.StoreService.ListStore)
 }
 
 // @Summary      Get detail store
@@ -50,5 +50,5 @@ func (ctr *storeController) List(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/store/{code} [get]
 func (ctr *storeController) Find(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.StoreService.Find)
+	return execute(ctx, ctr.StoreService.FindStore)
 }

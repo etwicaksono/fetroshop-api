@@ -40,7 +40,7 @@ func ProductControllerProvider(vld *validator.Validate, svc product.ProductServi
 // @Router       /api/product/create  [post]
 // @Security Bearer
 func (ctr *productController) Create(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.ProductService.Create)
+	return execute(ctx, ctr.ProductService.CreateProduct)
 }
 
 // @Summary      Update product
@@ -58,7 +58,7 @@ func (ctr *productController) Create(ctx *fiber.Ctx) (err error) {
 // @Router       /api/product/{code} [put]
 // @Security Bearer
 func (ctr *productController) Update(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.ProductService.Update)
+	return execute(ctx, ctr.ProductService.UpdateProduct)
 }
 
 // @Summary      Delete product
@@ -75,7 +75,7 @@ func (ctr *productController) Update(ctx *fiber.Ctx) (err error) {
 // @Router       /api/product/{code} [delete]
 // @Security Bearer
 func (ctr *productController) Delete(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.ProductService.Delete)
+	return execute(ctx, ctr.ProductService.DeleteProduct)
 }
 
 // @Summary      List products
@@ -90,7 +90,7 @@ func (ctr *productController) Delete(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/product/list [get]
 func (ctr *productController) List(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.ProductService.List)
+	return execute(ctx, ctr.ProductService.ListProduct)
 }
 
 // @Summary      Get detail product
@@ -105,5 +105,5 @@ func (ctr *productController) List(ctx *fiber.Ctx) (err error) {
 // @Failure      500  {object}  model.Response
 // @Router       /api/product/{code} [get]
 func (ctr *productController) Find(ctx *fiber.Ctx) (err error) {
-	return execute(ctx, ctr.ProductService.Find)
+	return execute(ctx, ctr.ProductService.FindProduct)
 }

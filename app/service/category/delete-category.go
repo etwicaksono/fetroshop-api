@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *categoryService) Delete(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *categoryService) DeleteCategory(ctx *fiber.Ctx) (model.Response, error) {
 	pathPayload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, pathPayload)
 	if errParsing != nil {

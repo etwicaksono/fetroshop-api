@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func (svc *storeService) Find(ctx *fiber.Ctx) (model.Response, error) {
+func (svc *storeService) FindStore(ctx *fiber.Ctx) (model.Response, error) {
 	payload := new(model.FindByCodeRequest)
 	errValidation, errParsing := validatorhelper.ValidateParamPayload(ctx, svc.Validate, payload)
 	if errParsing != nil {

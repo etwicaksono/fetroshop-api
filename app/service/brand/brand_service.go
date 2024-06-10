@@ -12,12 +12,12 @@ import (
 )
 
 type BrandService interface {
-	Create(ctx *fiber.Ctx) (model.Response, error)
-	Update(ctx *fiber.Ctx) (model.Response, error)
-	Delete(ctx *fiber.Ctx) (model.Response, error)
-	List(ctx *fiber.Ctx) (model.Response, error)
-	ListByPrefix(ctx *fiber.Ctx) (model.Response, error)
-	Find(ctx *fiber.Ctx) (model.Response, error)
+	CreateBrand(ctx *fiber.Ctx) (model.Response, error)
+	UpdateBrand(ctx *fiber.Ctx) (model.Response, error)
+	DeleteBrand(ctx *fiber.Ctx) (model.Response, error)
+	ListBrand(ctx *fiber.Ctx) (model.Response, error)
+	ListBrandByPrefix(ctx *fiber.Ctx) (model.Response, error)
+	FindBrand(ctx *fiber.Ctx) (model.Response, error)
 }
 
 type brandService struct {
