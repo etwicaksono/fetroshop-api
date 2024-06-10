@@ -38,7 +38,7 @@ func (svc *categoryService) FindCategory(ctx *fiber.Ctx) (model.Response, error)
 
 	return responsehelper.Response200(
 		"Successfuly got category", // #marked: message
-		&model.CategoryResponse{
+		model.CategoryResponse{
 			Code:         category.Code,
 			ParentCode:   null.NewString(parentCode, parentCode != ""),
 			Name:         category.Name,

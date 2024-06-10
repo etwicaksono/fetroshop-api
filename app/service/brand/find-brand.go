@@ -35,7 +35,7 @@ func (svc *brandService) FindBrand(ctx *fiber.Ctx) (model.Response, error) {
 		Code:    fiber.StatusOK,
 		Status:  utils.StatusMessage(fiber.StatusOK),
 		Message: "Successfuly got brand", // #marked: message
-		Data: &model.BrandResponse{
+		Data: model.BrandResponse{
 			Code:      brand.Code,
 			Name:      brand.Name,
 			IsActive:  brand.IsActive,

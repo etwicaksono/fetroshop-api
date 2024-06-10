@@ -53,14 +53,14 @@ func (svc *categoryService) ListCategory(ctx *fiber.Ctx) (model.Response, error)
 		return model.Response{}, result.Error
 	}
 
-	var list []*model.CategoryResponse
+	var list []model.CategoryResponse
 	for _, ct := range categorySlice {
 		parentCode := ""
 		if ct.Parent != nil {
 			parentCode = ct.Parent.Code
 		}
 
-		category := &model.CategoryResponse{
+		category := model.CategoryResponse{
 			Code:         ct.Code,
 			ParentCode:   null.NewString(parentCode, parentCode != ""),
 			Name:         ct.Name,

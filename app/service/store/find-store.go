@@ -32,7 +32,7 @@ func (svc *storeService) FindStore(ctx *fiber.Ctx) (model.Response, error) {
 
 	return responsehelper.Response200(
 		"Successfuly got store", // #marked: message
-		&model.StoreDetail{
+		model.StoreDetail{
 			Code:      store.Code,
 			Name:      store.Name,
 			IsActive:  store.IsActive,

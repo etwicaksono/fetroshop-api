@@ -37,9 +37,9 @@ func (svc *brandService) ListBrandByPrefix(ctx *fiber.Ctx) (model.Response, erro
 		return model.Response{}, result.Error
 	}
 
-	var list []*model.BrandResponse
+	var list []model.BrandResponse
 	for _, brd := range brandSlice {
-		brand := &model.BrandResponse{
+		brand := model.BrandResponse{
 			Code:      brd.Code,
 			Name:      brd.Name,
 			IsActive:  brd.IsActive,

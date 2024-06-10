@@ -53,9 +53,9 @@ func (svc *locationService) ListSubdistricts(ctx *fiber.Ctx) (model.Response, er
 	}
 	selected = result.RowsAffected
 
-	var list []*model.IDName
+	var list []model.IDName
 	for _, ct := range subdistrictSlice {
-		category := &model.IDName{
+		category := model.IDName{
 			ID:   ct.ID,
 			Name: ct.Name,
 		}

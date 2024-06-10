@@ -41,9 +41,9 @@ func (svc *locationService) ListProvinces(ctx *fiber.Ctx) (model.Response, error
 	}
 	selected = result.RowsAffected
 
-	var list []*model.IDName
+	var list []model.IDName
 	for _, ct := range provinceSlice {
-		category := &model.IDName{
+		category := model.IDName{
 			ID:   ct.ID,
 			Name: ct.Name,
 		}

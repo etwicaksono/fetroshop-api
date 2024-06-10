@@ -34,9 +34,9 @@ func (svc *storeService) ListStore(ctx *fiber.Ctx) (model.Response, error) {
 	}
 
 	// retrieve data
-	var list []*model.StoreListData
+	var list []model.StoreListData
 	for _, st := range storeSlice {
-		store := &model.StoreListData{
+		store := model.StoreListData{
 			Code:          st.Code,
 			Name:          st.Name,
 			IsActive:      st.IsActive,
